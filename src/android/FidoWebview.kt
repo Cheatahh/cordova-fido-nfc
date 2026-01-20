@@ -34,7 +34,7 @@ class FidoWebview : CordovaPlugin() {
         }.onSuccess { result ->
             sendStatusResult(StatusCodes.Success, result)
         }.onFailure { err ->
-            sendStatusResult(StatusCodes.Failure, err.message)
+            sendStatusResult(StatusCodes.Failure, err.message.toString())
         }
         return true
     }
