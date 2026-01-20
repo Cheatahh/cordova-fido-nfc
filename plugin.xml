@@ -13,11 +13,6 @@
     <platform name="android">
 
         <framework
-            src="org.jetbrains.kotlin:kotlin-gradle-plugin:2.3.0"
-            type="gradle"
-            custom="true" />
-
-        <framework
             src="org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.3.0"
             type="gradle" />
 
