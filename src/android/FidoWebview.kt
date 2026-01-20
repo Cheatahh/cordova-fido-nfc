@@ -16,7 +16,7 @@ enum class StatusCodes(val code: Int, val resultStatus: PluginResult.Status) {
 class FidoWebview : CordovaPlugin() {
     override fun execute(action: String, args: JSONArray, callback: CallbackContext) = when(action) {
         "getAssertion" -> {
-            executeGetAssertion(args)
+            callback.with(args, ::executeGetAssertion)
             true
         }
         "log" -> {
