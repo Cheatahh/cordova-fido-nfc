@@ -6,7 +6,7 @@ import org.apache.cordova.PluginResult
 import org.json.JSONArray
 import org.json.JSONObject
 
-enum class StatusCodes(val code: Int, val resultCode: Int) {
+enum class StatusCodes(val code: Int, val resultStatus: PluginResult.Status) {
     Success(1, PluginResult.Status.OK),
     Failure(2, PluginResult.Status.ERROR),
     Progress(3, PluginResult.Status.OK)
@@ -21,7 +21,7 @@ class FidoWebview : CordovaPlugin() {
         else -> false
     }
     private fun CallbackContext.sendStatusResult(code: StatusCodes, payload: Any) {
-        val result = PluginResult(code.resultCode, JSONObject().apply {
+        val result = PluginResult(code.resultStatus, JSONObject().apply {
             put("statusCode", code.code)
             put("payload", payload)
         })
