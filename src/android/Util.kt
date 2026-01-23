@@ -13,4 +13,4 @@ fun String.decodeBase64() = Base64.decode(this, Base64.DEFAULT)!!
 fun ByteArray.encodeBase64() = Base64.encodeToString(this, Base64.DEFAULT)!!
 fun ByteArray.encodeBase64Url() = Base64.encodeToString(this, Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP)!!
 
-fun UByteArray.toJsonArray() = JSONArray(this)
+fun UByteArray.toJsonArray() = JSONArray(map(UByte::toInt))
