@@ -29,11 +29,11 @@
             type="gradle" />
 
         <framework
-            src="androidx.credentials:credentials:1.6.0-rc01"
+            src="androidx.credentials:credentials:1.5.0"
             type="gradle" />
 
         <framework
-            src="androidx.credentials:credentials-play-services-auth:1.6.0-rc01"
+            src="androidx.credentials:credentials-play-services-auth:1.5.0"
             type="gradle" />
 
         <config-file target="AndroidManifest.xml" parent="/*">
