@@ -49,8 +49,8 @@ class FidoWebview : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val targetUrl = requireNotNull(intent?.getStringExtra("targetUrl"))
         val injectJsCode = requireNotNull(intent?.getStringExtra("injectJsCode"))
-        setContentView(resources.getIdentifier("fido_webview", "layout", packageName))
-        findViewById<WebView>(resources.getIdentifier("fidoWebview", "id", packageName)).apply {
+        setContentView(resources.getIdentifier("fido_webview", "layout", null))
+        findViewById<WebView>(resources.getIdentifier("fidoWebview", "id", null)).apply {
             CookieManager.getInstance().removeAllCookies {
                 runOnUiThread ui@ {
                     configureAsBrowser()
@@ -61,7 +61,7 @@ class FidoWebview : ComponentActivity() {
                         }
                     }
                     if(!configurePasskeySupport()) {
-                        setContentView(resources.getIdentifier("fido_webview_unsupported", "layout", packageName))
+                        setContentView(resources.getIdentifier("fido_webview_unsupported", "layout", null))
                         return@ui
                     }
                     loadUrl(targetUrl)
