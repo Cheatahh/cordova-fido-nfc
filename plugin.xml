@@ -44,6 +44,10 @@
             <uses-feature
                 android:name="android.hardware.nfc"
                 android:required="true" />
+            <activity
+                android:name="com.fkmit.fido.FidoWebview"
+                android:exported="false"
+                android:theme="@android:style/Theme.DeviceDefault.NoActionBar" />
         </config-file>
 
         <config-file target="res/xml/config.xml" parent="/*">
