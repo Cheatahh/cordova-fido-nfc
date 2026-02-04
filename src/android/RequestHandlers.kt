@@ -2,6 +2,7 @@
 
 package com.fkmit.fido
 
+import android.util.Log
 import com.yubico.yubikit.core.application.InvalidPinException
 import com.yubico.yubikit.core.fido.CtapException
 import com.yubico.yubikit.fido.ctap.ClientPin
@@ -26,19 +27,29 @@ object RequestHandlers {
         val userId = args.optString(3).takeIf(String::isNotBlank)?.decodeBase64()
 
         nfc.useDeviceConnection(dispatch) ctx@ { connection ->
+            Log.e("FIDO", "init")
             dispatch.sendMessage(MessageCodes.SignalProgressUpdate, 0f)
+            Log.e("FIDO", "session starting")
             val session = Ctap2Session(connection)
+            Log.e("FIDO", "session created")
             when(userPin) {
                 null -> {
+                    Log.e("FIDO", "mode: no pin")
                     dispatch.sendMessage(MessageCodes.SignalProgressUpdate, 1f / 2f)
+                    Log.e("FIDO", "getting assertion")
                     val assertion = Fido.getAssertions(session, rpId, clientData)
+                    Log.e("FIDO", "assertions got: ${assertion.size}")
                     dispatch.sendMessage(MessageCodes.SignalProgressUpdate, 2f / 2f)
                     val result = Fido.encodePublicKeyCredentials(assertion, clientData)
+                    Log.e("FIDO", "result got: $result")
                     dispatch.sendMessage(MessageCodes.Success, result)
                 }
                 else -> {
+                    Log.e("FIDO", "mode: with pin")
                     val pinProtocol = PinUvAuthProtocolV1()
+                    Log.e("FIDO", "getting client pin")
                     val clientPin = ClientPin(session, pinProtocol)
+                    Log.e("FIDO", "getting uv token")
                     var pinUvAuthToken = try {
                         clientPin.getPinToken(userPin, ClientPin.PIN_PERMISSION_CM, null)
                     } catch (_: InvalidPinException) {
@@ -48,7 +59,9 @@ object RequestHandlers {
                         dispatch.sendMessage(MessageCodes.FailureUnsupportedDevice, null)
                         return@ctx
                     }
+                    Log.e("FIDO", "token: $pinUvAuthToken")
                     dispatch.sendMessage(MessageCodes.SignalProgressUpdate, 1f / 3f)
+                    Log.e("FIDO", "getting credentials")
                     val credentials = Fido.getCredentials(session, clientPin, pinUvAuthToken).filter {
                         it.rpId == rpId && it.credentialType == "public-key" && (userId === null || it.userId contentEquals userId)
                     }
@@ -59,11 +72,17 @@ object RequestHandlers {
                         dispatch.sendMessage(MessageCodes.SuccessUserChoiceRequired, Fido.encodeCredentialList(credentials))
                         return@ctx
                     }
+                    Log.e("FIDO", "credentials got: ${credentials.size}")
                     dispatch.sendMessage(MessageCodes.SignalProgressUpdate, 2f / 3f)
+                    Log.e("FIDO", "getting uv token")
                     pinUvAuthToken = clientPin.getPinToken(userPin, ClientPin.PIN_PERMISSION_GA, rpId)
+                    Log.e("FIDO", "token: $pinUvAuthToken")
+                    Log.e("FIDO", "getting assertion")
                     val assertion = Fido.getAssertions(session, pinProtocol, pinUvAuthToken, credentials.first(), rpId, clientData)
+                    Log.e("FIDO", "assertions got: ${assertion.size}")
                     dispatch.sendMessage(MessageCodes.SignalProgressUpdate, 3f / 3f)
                     val result = Fido.encodePublicKeyCredentials(assertion, clientData)
+                    Log.e("FIDO", "result got: $result")
                     dispatch.sendMessage(MessageCodes.Success, result)
                 }
             }

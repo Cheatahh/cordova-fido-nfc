@@ -45,7 +45,10 @@ class FidoIntegration : CordovaPlugin(), NFCDiscoveryDispatcher {
         val dispatch = ResultDispatcher(callback)
         runCatching {
             when(action) {
-                "getAssertion" -> RequestHandlers.getAssertion(args, this@FidoIntegration, dispatch)
+                "getAssertion" -> {
+                    stopDeviceDiscovery()
+                    RequestHandlers.getAssertion(args, this@FidoIntegration, dispatch)
+                }
                 "reset" -> {
                     stopDeviceDiscovery()
                     dispatch.sendMessage(MessageCodes.Success, null)
@@ -63,14 +66,14 @@ class FidoIntegration : CordovaPlugin(), NFCDiscoveryDispatcher {
             ensureYubikitInitialized()
             yubikitDiscoveryCallback = callback
             yubikitManager?.startNfcDiscovery(NfcConfiguration().timeout(NFC_TIMEOUT), cordova.activity) { device ->
-                stopDeviceDiscovery()
                 currentNFCDevice = device
                 callback(device)
+                stopDeviceDiscovery()
             }
             yubikitManager?.startUsbDiscovery(UsbConfiguration()) { device ->
-                stopDeviceDiscovery()
                 currentNFCDevice = device
                 callback(device)
+                stopDeviceDiscovery()
             }
         }
     }

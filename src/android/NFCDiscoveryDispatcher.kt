@@ -24,10 +24,10 @@ interface NFCDiscoveryDispatcher {
                 currentNFCDevice = null
                 dispatch.sendMessage(MessageCodes.SignalDeviceLost, null)
             }
-            startDeviceDiscovery { device ->
+            startDeviceDiscovery(InvokeOnce { device ->
                 dispatch.sendMessage(MessageCodes.SignalDeviceDiscovered, null)
                 device.openConnection(SmartCardConnection::class.java).use(callback)
-            }
+            })
         }
     }
 
