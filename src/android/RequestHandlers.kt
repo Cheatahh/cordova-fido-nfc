@@ -60,12 +60,15 @@ object RequestHandlers {
                         }
                     }.onSuccess { credentials ->
                         Log.e("FIDO", "credentials got: ${credentials.size}")
-                        require(credentials.isNotEmpty()) {
-                            "No matching credential found."
-                        }
-                        if(credentials.size > 1) {
-                            dispatch.sendMessage(MessageCodes.FailureTooManyCredentials, Fido.encodeCredentialList(credentials))
-                            return@ctx
+                        when {
+                            credentials.isEmpty() -> {
+                                dispatch.sendMessage(MessageCodes.FailureNoCredentials, null)
+                                return@ctx
+                            }
+                            credentials.size > 1 -> {
+                                dispatch.sendMessage(MessageCodes.FailureTooManyCredentials, Fido.encodeCredentialList(credentials))
+                                return@ctx
+                            }
                         }
                     }.onFailure {
                         Log.e("FIDO", "credential manager not supported")

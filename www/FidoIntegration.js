@@ -21,9 +21,7 @@ function runExecCatching(onMessage, action, parameters) {
     try {
         exec((result) => {
             onMessage(result.statusCode, result.payload);
-        }, (err) => {
-            onMessage(err.statusCode, err.payload);
-        }, 'FidoIntegration', action, parameters);
+        }, (_) => {}, 'FidoIntegration', action, parameters);
     } catch(err) {
         onMessage(0x2000, extractMessage(err));
     }

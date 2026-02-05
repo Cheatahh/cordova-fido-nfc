@@ -8,7 +8,7 @@ import org.json.JSONObject
 value class ResultDispatcher(private val callback: CallbackContext) {
 
     fun sendMessage(code: MessageCodes, payload: Any?) {
-        val result = PluginResult(code.resultStatus, JSONObject().apply {
+        val result = PluginResult(PluginResult.Status.OK, JSONObject().apply {
             put("statusCode", code.code)
             put("payload", payload)
         })

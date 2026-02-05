@@ -68,12 +68,10 @@ class FidoIntegration : CordovaPlugin(), NFCDiscoveryDispatcher {
             yubikitManager?.startNfcDiscovery(NfcConfiguration().timeout(NFC_TIMEOUT), cordova.activity) { device ->
                 currentNFCDevice = device
                 callback(device)
-                stopDeviceDiscovery()
             }
             yubikitManager?.startUsbDiscovery(UsbConfiguration()) { device ->
                 currentNFCDevice = device
                 callback(device)
-                stopDeviceDiscovery()
             }
         }
     }
@@ -92,7 +90,10 @@ class FidoIntegration : CordovaPlugin(), NFCDiscoveryDispatcher {
     }
 
     override fun onPause(multitasking: Boolean) {
-        stopDeviceDiscovery()
+        yubikitDiscoveryCallback.also { swap ->
+            stopDeviceDiscovery()
+            yubikitDiscoveryCallback = swap
+        }
         super.onPause(multitasking)
     }
 

@@ -16,24 +16,28 @@ interface NFCDiscoveryDispatcher {
     fun stopDeviceDiscovery()
 
     private fun runWithCatching(dispatch: ResultDispatcher, block: () -> Unit) {
-        Log.e("DEBUG", "runWithCatching")
+        Log.wtf("DEBUG", "runWithCatching")
         try {
             block()
         } catch (e: TagLostException) {
-            Log.w("ERROR", e)
+            Log.wtf("ERROR", e)
             currentNFCDevice = null
             dispatch.sendMessage(MessageCodes.FailureDeviceLost, null)
         } catch (e: InvalidPinException) {
-            Log.w("ERROR", e)
+            Log.wtf("ERROR", e)
             dispatch.sendMessage(MessageCodes.FailureInvalidPin, null)
         } catch (e: CtapException) {
-            Log.w("ERROR", e)
-            dispatch.sendMessage(if(e.ctapError == CtapException.ERR_NO_CREDENTIALS) MessageCodes.FailureNoCredentials else MessageCodes.FailureUnsupportedDevice, null)
+            Log.wtf("ERROR", e)
+            dispatch.sendMessage(when(e.ctapError) {
+                CtapException.ERR_NO_CREDENTIALS -> MessageCodes.FailureNoCredentials
+                CtapException.ERR_PIN_INVALID -> MessageCodes.FailureInvalidPin
+                else -> MessageCodes.FailureUnsupportedDevice
+            }, null)
         } catch (e: Exception) {
-            Log.w("ERROR", e)
+            Log.wtf("ERROR", e)
             dispatch.sendMessage(MessageCodes.Failure, e.message)
         }
-        Log.e("DEBUG", "runWithCatching2")
+        Log.wtf("DEBUG", "runWithCatching2")
     }
 
     fun useDeviceConnection(dispatch: ResultDispatcher, callback: (SmartCardConnection) -> Unit) {
@@ -43,7 +47,9 @@ interface NFCDiscoveryDispatcher {
                 it.openConnection(SmartCardConnection::class.java)
             }
         }.onSuccess { connection ->
-            runWithCatching(dispatch) { connection.use(callback) }
+            runWithCatching(dispatch) {
+                connection.use(callback)
+            }
         }.onFailure {
             stopDeviceDiscovery()
             startDeviceDiscovery(InvokeOnce { device ->
