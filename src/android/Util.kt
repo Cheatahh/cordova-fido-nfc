@@ -52,6 +52,5 @@ fun UByteArray.toJsonArray() = JSONArray(map(UByte::toInt))
  * */
 @SuppressLint("LogTagMismatch")
 inline fun log(message: () -> String) {
-    if (Log.isLoggable("FIDO", Log.DEBUG))
-        Log.d("FIDO", message())
+    Log.d("FIDO", message())
 }
