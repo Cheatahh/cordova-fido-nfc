@@ -66,6 +66,7 @@ interface NFCDiscoveryDispatcher {
             dispatch.sendMessage(when(e.ctapError) {
                 CtapException.ERR_NO_CREDENTIALS -> MessageCodes.FailureNoCredentials
                 CtapException.ERR_PIN_INVALID -> MessageCodes.FailureInvalidPin
+                CtapException.ERR_PIN_BLOCKED -> MessageCodes.FailureBlockedPin
                 else -> MessageCodes.FailureUnsupportedDevice
             }, null)
         } catch (e: Exception) {

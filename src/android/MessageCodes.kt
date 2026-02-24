@@ -69,6 +69,12 @@ enum class MessageCodes(val code: Int, val isTerminal: Boolean) {
     FailureTooManyCredentials(FLAG_ERROR or 0x0005, true),
 
     /**
+     * Failure indicating the pin has been entered wrong too many times.
+     * Composed from [FLAG_ERROR] with subcode 0x0006. Terminal.
+     */
+    FailureBlockedPin(FLAG_ERROR or 0x0006, true),
+
+    /**
      * Progress update signal.
      * Uses [FLAG_SIGNAL] with subcode 0x0001. Non-terminal (informational).
      */

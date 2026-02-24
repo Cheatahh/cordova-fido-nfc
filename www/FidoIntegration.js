@@ -36,6 +36,7 @@ const FidoIntegration = {
         FAILURE_DEVICE_LOST: 0x2003, // payload: null
         FAILURE_NO_CREDENTIALS: 0x2004, // payload: null
         FAILURE_TOO_MANY_CREDENTIALS: 0x2005, // payload: [{name :string, id: string}]
+        FAILURE_BLOCKED_PIN: 0x2006, // payload: null
         SIGNAL_PROGRESS_UPDATE: 0x3001, // payload: float
         SIGNAL_DEVICE_DISCOVERED: 0x3002 // payload: null
     },
